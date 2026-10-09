@@ -62,6 +62,15 @@ Global Tailwind and shadcn CSS setup lives in `app/globals.css`. The page mostly
 - The repository currently has no test script or test files in the inspected tree.
 - Package scripts are `dev`, `build`, and `start`.
 
+## GitHub Pages deployment
+
+- `next.config.mjs` uses `output: 'export'` and `trailingSlash: true`; builds generate static files in `out/`. `next start` does not serve this export; use a static web server for the output.
+- `NEXT_PUBLIC_BASE_PATH` defaults to an empty string for local development and is `/blog_logue` for GitHub Pages. Shared preview URLs and metadata icons include this path.
+- Both pages read query parameters and localStorage after mounting to preserve matching server and browser initial HTML. The preview does not require a server or `useSearchParams`.
+- Vercel Analytics is disabled for deployment with a base path because GitHub Pages does not provide its ingestion endpoint.
+- `.github/workflows/pages.yml` builds with Node 24 and the pnpm version in `package.json`, then publishes `out/` using GitHub Pages Actions. Pushes to `deploy-v0` trigger deployment.
+- Pages must use the GitHub Actions (`workflow`) build type. The public URL is `https://ulysess31.github.io/blog_logue/`.
+
 
 
 

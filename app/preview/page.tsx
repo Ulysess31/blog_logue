@@ -1,16 +1,15 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { BlogPreview } from '@/components/blog-preview'
 import { parseMarkdown, sampleMarkdown } from '@/lib/blog'
 
 export default function PreviewPage() {
-  const searchParams = useSearchParams()
-  const sharedMarkdown = searchParams.get('content')
+  const [sharedMarkdown, setSharedMarkdown] = useState<string | null>(null)
   const [savedMarkdown, setSavedMarkdown] = useState<string | null>(null)
 
   useEffect(() => {
+    setSharedMarkdown(new URLSearchParams(window.location.search).get('content'))
     setSavedMarkdown(window.localStorage.getItem('blog-logue-markdown'))
   }, [])
 

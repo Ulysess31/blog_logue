@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { ChangeEvent, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { BlogPreview } from '@/components/blog-preview'
 import { parseMarkdown, sampleMarkdown } from '@/lib/blog'
 import {
@@ -19,12 +19,11 @@ import {
 import { cn } from '@/lib/utils'
 
 export default function Page() {
-  const [markdown, setMarkdown] = useState(() => {
-    if (typeof window === 'undefined') return sampleMarkdown
+  const [markdown, setMarkdown] = useState(sampleMarkdown)
+  useEffect(() => {
     const shared = new URLSearchParams(window.location.search).get('content')
-    if (shared) return shared
-    return window.localStorage.getItem('blog-logue-markdown') || sampleMarkdown
-  })
+    setMarkdown(shared || window.localStorage.getItem('blog-logue-markdown') || sampleMarkdown)
+  }, [])
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [copied, setCopied] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -45,7 +44,7 @@ export default function Page() {
   }
   const downloadTemplate = () => { const blob = new Blob([sampleMarkdown], { type: 'text/markdown' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'blog-intro-template.md'; a.click(); URL.revokeObjectURL(url) }
   const share = async () => {
-    const url = `${window.location.origin}/preview?content=${encodeURIComponent(markdown)}`
+    const url = `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ''}/preview/?content=${encodeURIComponent(markdown)}`
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
